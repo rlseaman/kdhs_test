@@ -1,0 +1,594 @@
+# Extensions Names
+
+switch $nimages {
+ 1 { set extname(ccd1,A) im1 }
+ 2 { set extname(ccd1,A) im1
+     set extname(ccd1,B) im2 }
+}
+
+# Detectors
+
+set detname(mos)  "KOSMOS"
+set detname(ccd1) "K123-45"
+
+# Geometry.
+# This is unbinned.  The KTM will adjust these based only on binning factors.
+
+set detsize(mos,1) 2048; set detsize(mos,2) 4096
+set detsize(ccd,1) 2048; set detsize(ccd,2) 4096
+set detsize(bias,1) 50
+switch $nimages {
+# 1 { set detsize(amp,1) 2048; set detsize(amp,2) 4096 }
+ 1 { set detsize(amp,1) 1024; set detsize(amp,2) 4096 }
+ 2 { set detsize(amp,1) 1024; set detsize(amp,2) 4096 }
+}
+
+# CCD to Image transformation (IRAF logical).
+set ltv(1) 0; set ltv(2) 0; set ltm(1) 1; set ltm(2) 1
+
+# CCD to Amplifier transformation.
+set atv(A,1)    0; set atv(A,2)    0; set atm(A,1)  1; set atm(A,2)  1
+set atv(B,1) 2049; set atv(B,2)    0; set atm(B,1) -1; set atm(B,2)  1
+
+# CCD to Detector transformation.
+set dtv(ccd1,1)    0; set dtv(ccd1,2)    0; set dtm(ccd1,1) 1; set dtm(ccd1,2) 1
+
+# Filter translations.  Anything not define by wcsfilter defaults to the
+# default solution which is currently V.
+
+# Old names.
+set wcsfilter(U_Mosaic)			 U
+set wcsfilter(B_Mosaic)			 B
+set wcsfilter(V_Mosaic)			 V
+set wcsfilter(R_Mosaic)			 R
+set wcsfilter(I_Mosaic)			 I
+set wcsfilter(UB)			 Bw
+set wcsfilter(WR_CIII)			 wrc3
+set wcsfilter(WR_HeII)			 wrhe2
+set wcsfilter(WR_475)			 wr475
+
+# New names.
+set wcsfilter(blank)			 V
+set wcsfilter(U_k1001)			 U
+set wcsfilter(B_Harris_k1002)		 B
+set wcsfilter(V_Harris_k1003)		 V
+set wcsfilter(R_Harris_k1004)		 R
+set wcsfilter(I_Nearly_Mould_k1005)	 I
+set wcsfilter(C_Washington_k1006)	 V
+set wcsfilter(M_Washington_k1007)	 V
+set wcsfilter(D51_DDO_51_k1008)		 V
+set wcsfilter(ha_H_alpha_k1009)		 R
+set wcsfilter(ha4_H_alpha_4nm_k1010)	 R
+set wcsfilter(ha8_H_alpha_8nm_k1011)	 R
+set wcsfilter(ha12_H_alpha_12nm_k1012)	 R
+set wcsfilter(ha16_H_alpha_16nm_k1013)	 R
+set wcsfilter(O3_OIII_N2_k1014)	 	 V
+set wcsfilter(Ooff_OIII_30nm_k1015)	 V
+set wcsfilter(Wh_Bk_7_k1016)		 V
+set wcsfilter(g_SDSS_k1017)		 g_SDSS_k1017
+set wcsfilter(r_SDSS_k1018)		 r_SDSS_k1018
+set wcsfilter(i_SDSS_k1019)		 i_SDSS_k1019
+set wcsfilter(z_SDSS_k1020)		 I
+set wcsfilter(wrc3_WR_CIII_k1021)	 wrc3
+set wcsfilter(wr475_WR_475_k1022)	 wr475
+set wcsfilter(wrhe2_WR_HeII_k1023)	 wrhe2
+set wcsfilter(wrc4_WR_CIV_k1024)	 wrc4
+set wcsfilter(Bw_NDWFS_k1025)		 Bw
+set wcsfilter(815_815_v1_k1026)		 R
+set wcsfilter(823_823_v1_k1027)		 R
+set wcsfilter(U_spare_k1029)		 U
+set wcsfilter(Ooff_OIII_30nm_k1030)	 V
+set wcsfilter(Ooff_OIII_30nm_k1031)	 V
+set wcsfilter(VR_Bernstein_k1040)	 V
+set wcsfilter(Un_Steidel_k1041)		 B
+set wcsfilter(Gn_Steidel_k1042)		 B
+set wcsfilter(Rs_Steidel_k1043)		 R
+set wcsfilter(Us_solid_U_k1044)		 U
+set wcsfilter(Ud_Dey_k1045)		 U
+set wcsfilter(743_KP1513_4inch)		 I
+set wcsfilter(743_k1513_4inch)		 I
+
+# WCS Astrometry.
+# Currently available 4m: U, B, V, R, I, Bw, wrc3, wr475, wrhe2
+# Currently available 36inch: V, I
+
+set WCSASTRM(kp09m,V,ccd1) \
+          {kp09m.19980909T031418 (Tr 37 V) by L. Davis 1998-09-09}
+set CTYPE1(kp09m,V,ccd1) RA---TNX
+set CTYPE2(kp09m,V,ccd1) DEC--TNX
+set CRPIX1(kp09m,V,ccd1) 4182.40899468879
+set CRPIX2(kp09m,V,ccd1) 4128.89169378612
+set CD1_1(kp09m,V,ccd1) -4.9073735793830E-7
+set CD2_2(kp09m,V,ccd1) -7.9233652921004E-8
+set CD1_2(kp09m,V,ccd1) 1.17804963401409E-4
+set CD2_1(kp09m,V,ccd1) -1.1749423242725E-4
+set WAT01(kp09m,V,ccd1) {system=image}
+set WAT11(kp09m,V,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. -0.4852386956806389 -0.001}
+set WAT12(kp09m,V,ccd1) \
+          {822831180170997 0.2507833526458271 0.4916185082331186 1.167805059766}
+set WAT13(kp09m,V,ccd1) \
+          {710E-4 -1.884915499101577E-4 2.914305498568797E-4 -6.279929625754467}
+set WAT14(kp09m,V,ccd1) \
+          {E-5 1.229324811636269E-5 -2.454860389575991E-4 -1.219148404443320E-6}
+set WAT15(kp09m,V,ccd1) \
+          { 1.277576148582111E-5 -2.760689826650748E-5 -2.877363548484508E-6 "}
+set WAT21(kp09m,V,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. -0.4852386956806389 -0.00}
+set WAT22(kp09m,V,ccd1) \
+          {1822831180170997 0.2507833526458271 0.4916185082331186 -5.8797034366}
+set WAT23(kp09m,V,ccd1) \
+          {33560E-5 5.719395546022725E-5 -1.434148311269413E-4 1.93097029157481}
+set WAT24(kp09m,V,ccd1) \
+          {7E-5 -3.459144063135233E-5 1.808516459097336E-4 -3.727038264301202E-}
+set WAT25(kp09m,V,ccd1) \
+          {5 -9.354103659921813E-5 1.114026227740438E-5 -7.675187678189141E-6 "}
+
+
+set WCSASTRM(kp09m,I,ccd1) \
+          {kp09m.19980909T032113 (Tr 37 I) by L. Davis 1998-09-09}
+set CTYPE1(kp09m,I,ccd1) RA---TNX
+set CTYPE2(kp09m,I,ccd1) DEC--TNX
+set CRPIX1(kp09m,I,ccd1) 4177.47225464005
+set CRPIX2(kp09m,I,ccd1) 4125.73526727701
+set CD1_1(kp09m,I,ccd1) -4.8072152792147E-7
+set CD2_2(kp09m,I,ccd1) -7.9946838788478E-8
+set CD1_2(kp09m,I,ccd1) 1.17787827091771E-4
+set CD2_1(kp09m,I,ccd1) -1.1749159863561E-4
+set WAT01(kp09m,I,ccd1) {system=image}
+set WAT11(kp09m,I,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. -0.4848199213054375 -0.001}
+set WAT12(kp09m,I,ccd1) \
+          {49473239697948 0.2501974766884624 0.491030161400401 1.13030816381995}
+set WAT13(kp09m,I,ccd1) \
+          {2E-4 -1.707216782837745E-4 2.803633369357262E-4 -5.143690369352947E-}
+set WAT14(kp09m,I,ccd1) \
+          {5 1.945942148618635E-5 -2.369703663469523E-4 -7.429273733084413E-6 8}
+set WAT15(kp09m,I,ccd1) \
+          {.709749233548711E-6 -2.858390629122917E-5 2.955208283886860E-6 "}
+set WAT21(kp09m,I,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. -0.4848199213054375 -0.00}
+set WAT22(kp09m,I,ccd1) \
+          {149473239697948 0.2501974766884624 0.491030161400401 -5.560373261596}
+set WAT23(kp09m,I,ccd1) \
+          {613E-5 5.001392712433507E-5 -1.349586304716118E-4 1.897467086535043E}
+set WAT24(kp09m,I,ccd1) \
+          {-5 -3.324275047782348E-5 1.783346728749642E-4 -3.154343073232479E-5 }
+set WAT25(kp09m,I,ccd1) \
+          {-9.486036588814933E-5 6.397921859130245E-6 -1.082315383839242E-5 "}
+
+set WCSASTRM(kp4m,V,ccd1) \
+          {kp4m.19981010T033325 (Tr 37 V) by L. Davis 19981010}
+set CTYPE1(kp4m,V,ccd1) RA---TNX
+set CTYPE2(kp4m,V,ccd1) DEC--TNX
+set CRPIX1(kp4m,V,ccd1) 4213.83069952698
+set CRPIX2(kp4m,V,ccd1) 4149.40032644895
+set CD1_1(kp4m,V,ccd1) 5.88206060291292E-7
+set CD2_2(kp4m,V,ccd1) 4.35870258267894E-7
+set CD1_2(kp4m,V,ccd1) -7.1687260065869E-5
+set CD2_1(kp4m,V,ccd1) -7.1352875477959E-5
+set WAT01(kp4m,V,ccd1) {system=image}
+set WAT11(kp4m,V,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 0.001350110541305456 0.296}
+set WAT12(kp4m,V,ccd1) \
+          {1134983164539 0.1527300838880007 0.3005743086989888 -2.3148854055725}
+set WAT13(kp4m,V,ccd1) \
+          {20E-4 -2.544362379374634E-5 -5.388234193153857E-4 -8.922255888845757}
+set WAT14(kp4m,V,ccd1) \
+          {E-5 -8.302381045554778E-5 -5.480973389725749E-4 -1.278609167401606E-}
+set WAT15(kp4m,V,ccd1) \
+          {5 -4.552906776144391E-5 -5.085009960518193E-5 1.494933829648152E-6 "}
+set WAT21(kp4m,V,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 0.001350110541305456 0.29}
+set WAT22(kp4m,V,ccd1) \
+          {61134983164539 0.1527300838880007 0.3005743086989888 -2.139239182123}
+set WAT23(kp4m,V,ccd1) \
+          {121E-4 1.511975415985664E-5 -2.737123763921002E-4 6.094554322351407E}
+set WAT24(kp4m,V,ccd1) \
+          {-6 -1.277938927468220E-4 -3.661387318373361E-4 -8.567151810206574E-5}
+set WAT25(kp4m,V,ccd1) \
+          { -2.095855623216569E-4 2.007952901140182E-6 -1.218760716077907E-5 "}
+
+
+
+set WCSASTRM(kp4m,I,ccd1) \
+          {kp4m.20000930T043226 (TR37 I k1005) by B. Jannuzi 2003-04-09}
+set CTYPE1(kp4m,I,ccd1) RA---TNX
+set CTYPE2(kp4m,I,ccd1) DEC--TNX
+set CRPIX1(kp4m,I,ccd1) 4195.27551472554
+set CRPIX2(kp4m,I,ccd1) 4111.53740536666
+set CD1_1(kp4m,I,ccd1) 5.60163812870897E-7
+set CD2_2(kp4m,I,ccd1) 4.05168461214871E-7
+set CD1_2(kp4m,I,ccd1) -7.1731811654516E-5
+set CD2_1(kp4m,I,ccd1) -7.1338759499605E-5
+set WAT01(kp4m,I,ccd1) {system=image}
+set WAT11(kp4m,I,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "3. 4. 4. 2. -0.001234955129198978 0.29}
+set WAT12(kp4m,I,ccd1) \
+          {36534689209923 0.1515185114090968 0.2992081169534626 -0.002078518317}
+set WAT13(kp4m,I,ccd1) \
+          {325942 0.01328759857633364 -0.001640217920207484 -0.1083010128769506}
+set WAT14(kp4m,I,ccd1) \
+          { 0.008450394761243426 0.005402596378862547 0.0024478616648235 -0.008}
+set WAT15(kp4m,I,ccd1) \
+          {895625117957941 -0.1256544678046397 0.01366484129014146 "           }
+set WAT21(kp4m,I,ccd1) \
+          {wtype=tnx axtype=dec latcor = "3. 4. 4. 2. -0.001234955129198978 0.2}
+set WAT22(kp4m,I,ccd1) \
+          {936534689209923 0.1515185114090968 0.2992081169534626 -0.00317293696}
+set WAT23(kp4m,I,ccd1) \
+          {3080974 0.005855558934025707 -0.002238246158703704 0.004073981266816}
+set WAT24(kp4m,I,ccd1) \
+          {218 0.01726193960226118 0.01262784647654248 -0.106043191039227 0.010}
+set WAT25(kp4m,I,ccd1) \
+          {6992791444327 -0.03451588454728726 -0.1252704154573497 "            }
+
+set WCSASTRM(kp4m,U,ccd1) \
+          {kp4m.19981010T034242 (Tr 37 U) by L. Davis 19981010}
+set CTYPE1(kp4m,U,ccd1) RA---TNX
+set CTYPE2(kp4m,U,ccd1) DEC--TNX
+set CRPIX1(kp4m,U,ccd1) 4215.03057641825
+set CRPIX2(kp4m,U,ccd1) 4149.41754418733
+set CD1_1(kp4m,U,ccd1) 6.03470332388808E-7
+set CD2_2(kp4m,U,ccd1) 4.45395761157458E-7
+set CD1_2(kp4m,U,ccd1) -7.1730585249616E-5
+set CD2_1(kp4m,U,ccd1) -7.1384021980083E-5
+set WAT01(kp4m,U,ccd1) {system=image}
+set WAT11(kp4m,U,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 0.001288629274506769 0.296}
+set WAT12(kp4m,U,ccd1) \
+          {2606796420825 0.1528436707088596 0.3007906593440288 -2.2975471622025}
+set WAT13(kp4m,U,ccd1) \
+          {98E-4 -3.147058344740969E-5 -5.432623308546626E-4 -8.458025681362878}
+set WAT14(kp4m,U,ccd1) \
+          {E-5 -7.993306384154502E-5 -5.603290176877834E-4 -1.361535962979877E-}
+set WAT15(kp4m,U,ccd1) \
+          {5 -4.682128297048267E-5 -5.132769054848774E-5 -1.594619069992891E-6"}
+set WAT21(kp4m,U,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 0.001288629274506769 0.29}
+set WAT22(kp4m,U,ccd1) \
+          {62606796420825 0.1528436707088596 0.3007906593440288 -2.078808345075}
+set WAT23(kp4m,U,ccd1) \
+          {088E-4 1.695443700956715E-5 -2.760922563540383E-4 6.038358373317410E}
+set WAT24(kp4m,U,ccd1) \
+          {-6 -1.167037461670406E-4 -3.735649766482556E-4 -8.930481582172999E-5}
+set WAT25(kp4m,U,ccd1) \
+          { -2.042467787878225E-4 1.309022539577173E-5 2.687661803644074E-7 "}
+
+set WCSASTRM(kp4m,R,ccd1) \
+          {kp4m.20000930T042833 (TR37 R k1004) by B. Jannuzi 2003-04-09}
+set CTYPE1(kp4m,R,ccd1) RA---TNX
+set CTYPE2(kp4m,R,ccd1) DEC--TNX
+set CRPIX1(kp4m,R,ccd1) 4196.01865614118
+set CRPIX2(kp4m,R,ccd1) 4110.589724539
+set CD1_1(kp4m,R,ccd1) 5.84175614885149E-7
+set CD2_2(kp4m,R,ccd1) 4.22418762773325E-7
+set CD1_2(kp4m,R,ccd1) -7.1722543388433E-5
+set CD2_1(kp4m,R,ccd1) -7.1323326474186E-5
+set WAT01(kp4m,R,ccd1) {system=image}
+set WAT11(kp4m,R,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "3. 4. 4. 2. -0.001404215451632501 0.29}
+set WAT12(kp4m,R,ccd1) \
+          {34954072076705 0.1514678680776533 0.2991965222038684 -0.002062367612}
+set WAT13(kp4m,R,ccd1) \
+          {10892 0.0126322648780401 0.004224327767548508 -0.1196119115310116 0.}
+set WAT14(kp4m,R,ccd1) \
+          {006812104797287796 0.008972960763022735 -0.006815714429302621 0.0015}
+set WAT15(kp4m,R,ccd1) \
+          {78871496890303 -0.129126291183437 -0.005020794062575614 "           }
+set WAT21(kp4m,R,ccd1) \
+          {wtype=tnx axtype=dec latcor = "3. 4. 4. 2. -0.001404215451632501 0.2}
+set WAT22(kp4m,R,ccd1) \
+          {934954072076705 0.1514678680776533 0.2991965222038684 -0.00316532367}
+set WAT23(kp4m,R,ccd1) \
+          {7012612 0.005645997706997803 0.003960222373084431 -0.003201145076898}
+set WAT24(kp4m,R,ccd1) \
+          {897 0.01606053746317478 0.0114657317314636 -0.1229144139026293 0.018}
+set WAT25(kp4m,R,ccd1) \
+          {25974967091188 -0.02508578996242691 -0.1386512160082192 "           }
+
+set WCSASTRM(kp4m,B,ccd1) \
+          {kp4m.19981012T035510 (Tr 37 B) by L. Davis 19981013}
+set CTYPE1(kp4m,B,ccd1) RA---TNX
+set CTYPE2(kp4m,B,ccd1) DEC--TNX
+set CRPIX1(kp4m,B,ccd1) 4201.98003641704
+set CRPIX2(kp4m,B,ccd1) 4137.48602662248
+set CD1_1(kp4m,B,ccd1) 6.11198174893381E-7
+set CD2_2(kp4m,B,ccd1) 4.51917542556915E-7
+set CD1_2(kp4m,B,ccd1) -7.1701223539435E-5
+set CD2_1(kp4m,B,ccd1) -7.1329086190821E-5
+set WAT01(kp4m,B,ccd1) {system=image}
+set WAT11(kp4m,B,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 4.069675375994405E-4 0.295}
+set WAT12(kp4m,B,ccd1) \
+          {274600595593 0.1517720770709265 0.2996333188403072 -2.43400889604536}
+set WAT13(kp4m,B,ccd1) \
+          {4E-4 -1.863153569610771E-5 -5.482794949672218E-4 -8.085430890308042E}
+set WAT14(kp4m,B,ccd1) \
+          {-5 -6.904936574741062E-5 -5.426855463797667E-4 -3.097713139645927E-5}
+set WAT15(kp4m,B,ccd1) \
+          { -5.100605320647182E-5 -4.608163781684982E-5 -4.778467110637049E-6"}
+set WAT21(kp4m,B,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 4.069675375994405E-4 0.29}
+set WAT22(kp4m,B,ccd1) \
+          {5274600595593 0.1517720770709265 0.2996333188403072 -2.1214373636907}
+set WAT23(kp4m,B,ccd1) \
+          {91E-4 1.687649491394406E-5 -2.681944559664209E-4 4.133968152092598E-}
+set WAT24(kp4m,B,ccd1) \
+          {6 -9.958450986377670E-5 -3.854028908544852E-4 -7.758933668028480E-5 }
+set WAT25(kp4m,B,ccd1) \
+          {-2.141933667661954E-4 4.382513177000551E-6 -4.793137925231863E-6"}
+
+set WCSASTRM(kp4m,Bw,ccd1) \
+          {kp4m.19981012T035821 (Tr 37 Bw NDWFS) by L. Davis 19981013}
+set CTYPE1(kp4m,Bw,ccd1) RA---TNX
+set CTYPE2(kp4m,Bw,ccd1) DEC--TNX
+set CRPIX1(kp4m,Bw,ccd1) 4202.60122790744
+set CRPIX2(kp4m,Bw,ccd1) 4139.16711822931
+set CD1_1(kp4m,Bw,ccd1) 6.17307340543304E-7
+set CD2_2(kp4m,Bw,ccd1) 4.61049573905277E-7
+set CD1_2(kp4m,Bw,ccd1) -7.1714183195811E-5
+set CD2_1(kp4m,Bw,ccd1) -7.1336009980425E-5
+set WAT01(kp4m,Bw,ccd1) {system=image}
+set WAT11(kp4m,Bw,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 5.020153447086133E-4 0.295}
+set WAT12(kp4m,Bw,ccd1) \
+          {4352236576473 0.1517927545112327 0.2997055649463046 -2.3492462548108}
+set WAT13(kp4m,Bw,ccd1) \
+          {54E-4 -3.840828211544947E-5 -5.481218697099662E-4 -9.160802872746993}
+set WAT14(kp4m,Bw,ccd1) \
+          {E-5 -6.485226906474696E-5 -5.560356893972371E-4 -2.215525561857218E-}
+set WAT15(kp4m,Bw,ccd1) \
+          {5 -4.957858263610528E-5 -6.066008453581353E-5 -5.449110520214021E-6"}
+set WAT21(kp4m,Bw,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 5.020153447086133E-4 0.29}
+set WAT22(kp4m,Bw,ccd1) \
+          {54352236576473 0.1517927545112327 0.2997055649463046 -2.149639955137}
+set WAT23(kp4m,Bw,ccd1) \
+          {346E-4 2.875254267733653E-5 -2.794379722151298E-4 7.791804173487360E}
+set WAT24(kp4m,Bw,ccd1) \
+          {-6 -1.089942601567180E-4 -3.663189501805679E-4 -8.781428866416145E-5}
+set WAT25(kp4m,Bw,ccd1) \
+          { -2.168381161951955E-4 1.247464054816300E-5 -4.723794155922157E-6"}
+
+set WCSASTRM(kp4m,wrc3,ccd1) \
+          {kp4m.20000826T061001 (TR37 WR CIII) by L. Davis 2000-08-28}
+set CTYPE1(kp4m,wrc3,ccd1) RA---TNX
+set CTYPE2(kp4m,wrc3,ccd1) DEC--TNX
+set CRPIX1(kp4m,wrc3,ccd1) 4217.49754518771
+set CRPIX2(kp4m,wrc3,ccd1) 4154.32289997968
+set CD1_1(kp4m,wrc3,ccd1) 7.10155495895716E-7
+set CD2_2(kp4m,wrc3,ccd1) 4.33218318835703E-7
+set CD1_2(kp4m,wrc3,ccd1) -7.1679344282746E-5
+set CD2_1(kp4m,wrc3,ccd1) -7.1265948847726E-5
+set WAT01(kp4m,wrc3,ccd1) {system=image}
+set WAT11(kp4m,wrc3,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 0.001186178322065435 0.296}
+set WAT12(kp4m,wrc3,ccd1) \
+          {166781460008 0.1528120055163041 0.3004674318232316 -1.62733046462239}
+set WAT13(kp4m,wrc3,ccd1) \
+          {5E-4 -4.003072291140187E-5 -5.319316712661080E-4 -9.078587912462589E}
+set WAT14(kp4m,wrc3,ccd1) \
+          {-5 4.679327739681851E-5 -5.624525508323158E-4 -4.018603708184736E-6 }
+set WAT15(kp4m,wrc3,ccd1) \
+          {-4.410161191712239E-5 -3.599919721746784E-5 5.209627826704678E-6 "  }
+set WAT21(kp4m,wrc3,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 0.001186178322065435 0.29}
+set WAT22(kp4m,wrc3,ccd1) \
+          {6166781460008 0.1528120055163041 0.3004674318232316 -1.5184555125887}
+set WAT23(kp4m,wrc3,ccd1) \
+          {81E-4 -3.284567539845096E-5 -2.818504409777072E-4 -6.058236307358133}
+set WAT24(kp4m,wrc3,ccd1) \
+          {E-6 -5.456532865662058E-5 -3.962658415510802E-4 -1.052279858573469E-}
+set WAT25(kp4m,wrc3,ccd1) \
+          {4 -2.066289141189632E-4 -1.045431165593411E-6 -1.08161260205672E-5 "}
+
+set WCSASTRM(kp4m,wrhe2,ccd1) \
+          {kp4m.20000826T063518 (TR37 WR HeII) by L. Davis 2000-08-28}
+set CTYPE1(kp4m,wrhe2,ccd1) RA---TNX
+set CTYPE2(kp4m,wrhe2,ccd1) DEC--TNX
+set CRPIX1(kp4m,wrhe2,ccd1) 4217.64907665403
+set CRPIX2(kp4m,wrhe2,ccd1) 4151.13107910395
+set CD1_1(kp4m,wrhe2,ccd1) 6.95474596323330E-7
+set CD2_2(kp4m,wrhe2,ccd1) 4.41656476750874E-7
+set CD1_2(kp4m,wrhe2,ccd1) -7.1672458346395E-5
+set CD2_1(kp4m,wrhe2,ccd1) -7.1259089535488E-5
+set WAT01(kp4m,wrhe2,ccd1) {system=image}
+set WAT11(kp4m,wrhe2,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 0.001018807656246755 0.295}
+set WAT12(kp4m,wrhe2,ccd1) \
+          {9411610834072 0.1527742855434271 0.3004502250948661 -1.5839377622465}
+set WAT13(kp4m,wrhe2,ccd1) \
+          {10E-4 -3.263468733011037E-5 -5.346847144913788E-4 -9.079763839931388}
+set WAT14(kp4m,wrhe2,ccd1) \
+          {E-5 5.354082586516910E-5 -5.563299202539090E-4 -1.002490549156181E-5}
+set WAT15(kp4m,wrhe2,ccd1) \
+          { -3.192390470145601E-5 -3.368249977843368E-5 1.272788219050737E-5 " }
+set WAT21(kp4m,wrhe2,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 0.001018807656246755 0.29}
+set WAT22(kp4m,wrhe2,ccd1) \
+          {59411610834072 0.1527742855434271 0.3004502250948661 -1.514629570452}
+set WAT23(kp4m,wrhe2,ccd1) \
+          {463E-4 -3.026684116014117E-5 -2.799260092341040E-4 -5.93574091585692}
+set WAT24(kp4m,wrhe2,ccd1) \
+          {3E-6 -5.266790287991089E-5 -3.903455176529696E-4 -1.016772922571366E}
+set WAT25(kp4m,wrhe2,ccd1) \
+          {-4 -2.070914583136112E-4 7.109280100204031E-7 -1.06080929410045E-5 "}
+
+set WCSASTRM(kp4m,wr475,ccd1) \
+          {kp4m.20000826T064322 (TR37 WR 475) by L. Davis 2000-08-28}
+set CTYPE1(kp4m,wr475,ccd1) RA---TNX
+set CTYPE2(kp4m,wr475,ccd1) DEC--TNX
+set CRPIX1(kp4m,wr475,ccd1) 4217.13657864386
+set CRPIX2(kp4m,wr475,ccd1) 4150.34338047209
+set CD1_1(kp4m,wr475,ccd1) 6.93945890265677E-7
+set CD2_2(kp4m,wr475,ccd1) 4.46117526207083E-7
+set CD1_2(kp4m,wr475,ccd1) -7.1676497509608E-5
+set CD2_1(kp4m,wr475,ccd1) -7.1261223634562E-5
+set WAT01(kp4m,wr475,ccd1) {system=image}
+set WAT11(kp4m,wr475,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "1. 4. 4. 2. 9.693725235225908E-4 0.295}
+set WAT12(kp4m,wr475,ccd1) \
+          {9051370627411 0.1527242320203684 0.3004228080701343 -1.5944764774579}
+set WAT13(kp4m,wr475,ccd1) \
+          {35E-4 -3.199615175635716E-5 -5.341726534037597E-4 -8.948526120451774}
+set WAT14(kp4m,wr475,ccd1) \
+          {E-5 4.941213437576702E-5 -5.612013686653199E-4 -1.514274616651077E-5}
+set WAT15(kp4m,wr475,ccd1) \
+          { -3.315474030845323E-5 -3.691832755302007E-5 9.114972187075045E-6 " }
+set WAT21(kp4m,wr475,ccd1) \
+          {wtype=tnx axtype=dec latcor = "1. 4. 4. 2. 9.693725235225908E-4 0.29}
+set WAT22(kp4m,wr475,ccd1) \
+          {59051370627411 0.1527242320203684 0.3004228080701343 -1.548877930248}
+set WAT23(kp4m,wr475,ccd1) \
+          {154E-4 -2.754850723813301E-5 -2.816678940606571E-4 -7.37546536804094}
+set WAT24(kp4m,wr475,ccd1) \
+          {3E-6 -5.302536942386483E-5 -3.976404150440506E-4 -1.060207366585274E}
+set WAT25(kp4m,wr475,ccd1) \
+          {-4 -2.059754363999314E-4 -3.056762360005805E-6 -1.1130993871204E-5 "}
+
+set WCSASTRM(kp4m,g_SDSS_k1017,ccd1) \
+          {kp4m.20000612T092059 (TR37 g SDSS k1017) by A. LaCluyze 2001-01-25}
+set CTYPE1(kp4m,g_SDSS_k1017,ccd1) RA---TNX
+set CTYPE2(kp4m,g_SDSS_k1017,ccd1) DEC--TNX
+set CRPIX1(kp4m,g_SDSS_k1017,ccd1) 4290.08688795285
+set CRPIX2(kp4m,g_SDSS_k1017,ccd1) 3995.8925715827
+set CD1_1(kp4m,g_SDSS_k1017,ccd1) 8.34144107443336E-7
+set CD2_2(kp4m,g_SDSS_k1017,ccd1) 5.64200507318744E-7
+set CD1_2(kp4m,g_SDSS_k1017,ccd1) -7.1533145046674E-5
+set CD2_1(kp4m,g_SDSS_k1017,ccd1) -7.1192764725599E-5
+set WAT01(kp4m,g_SDSS_k1017,ccd1) {system=image}
+set WAT11(kp4m,g_SDSS_k1017,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "3. 4. 4. 2. -0.01073871575112245 0.283}
+set WAT12(kp4m,g_SDSS_k1017,ccd1) \
+          {8970062029431 0.1573664438928068 0.3054084343635781 -0.0034166051365}
+set WAT13(kp4m,g_SDSS_k1017,ccd1) \
+          {01831 0.01301455587627509 0.001354251484257518 -0.113053032025549 0.}
+set WAT14(kp4m,g_SDSS_k1017,ccd1) \
+          {01675842818202708 0.03073061263323718 -0.01742815913151433 -0.039358}
+set WAT15(kp4m,g_SDSS_k1017,ccd1) \
+          {98347673394 -0.1697376948595415 0.06761990813014641 "               }
+set WAT21(kp4m,g_SDSS_k1017,ccd1) \
+          {wtype=tnx axtype=dec latcor = "3. 4. 4. 2. -0.01073871575112245 0.28}
+set WAT22(kp4m,g_SDSS_k1017,ccd1) \
+          {38970062029431 0.1573664438928068 0.3054084343635781 -0.003350864391}
+set WAT23(kp4m,g_SDSS_k1017,ccd1) \
+          {44302 0.005823807898841087 0.009978897067633127 -0.00956381734848299}
+set WAT24(kp4m,g_SDSS_k1017,ccd1) \
+          {3 0.01197246655716759 0.01822535184935997 -0.1378870700202538 0.0420}
+set WAT25(kp4m,g_SDSS_k1017,ccd1) \
+          {149378441097 -0.03481005354560086 -0.1662719181372325 "             }
+
+set WCSASTRM(kp4m,r_SDSS_k1018,ccd1) \
+          {kp4m.20000612T092507 (TR37 r SDSS k1018) by A. LaCluyze 2001-01-25}
+set CTYPE1(kp4m,r_SDSS_k1018,ccd1) RA---TNX
+set CTYPE2(kp4m,r_SDSS_k1018,ccd1) DEC--TNX
+set CRPIX1(kp4m,r_SDSS_k1018,ccd1) 4286.470658821
+set CRPIX2(kp4m,r_SDSS_k1018,ccd1) 3992.13952667899
+set CD1_1(kp4m,r_SDSS_k1018,ccd1) 7.33957719466037E-7
+set CD2_2(kp4m,r_SDSS_k1018,ccd1) 5.27908369671418E-7
+set CD1_2(kp4m,r_SDSS_k1018,ccd1) -7.1588947403995E-5
+set CD2_1(kp4m,r_SDSS_k1018,ccd1) -7.1230518167747E-5
+set WAT01(kp4m,r_SDSS_k1018,ccd1) {system=image}
+set WAT11(kp4m,r_SDSS_k1018,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "3. 4. 4. 2. -0.0105806162335186 0.2840}
+set WAT12(kp4m,r_SDSS_k1018,ccd1) \
+          {785348375883 0.1573404689704568 0.3053111244336384 -0.00205400216323}
+set WAT13(kp4m,r_SDSS_k1018,ccd1) \
+          {2912 0.01444059260715001 -0.002627586366944687 -0.1012258545647972 0}
+set WAT14(kp4m,r_SDSS_k1018,ccd1) \
+          {.002145315337949797 0.01485828460734996 -0.02268861677470521 0.02299}
+set WAT15(kp4m,r_SDSS_k1018,ccd1) \
+          {407622553468 -0.1299229951618371 -0.02920133054486547 "             }
+set WAT21(kp4m,r_SDSS_k1018,ccd1) \
+          {wtype=tnx axtype=dec latcor = "3. 4. 4. 2. -0.0105806162335186 0.284}
+set WAT22(kp4m,r_SDSS_k1018,ccd1) \
+          {0785348375883 0.1573404689704568 0.3053111244336384 -0.0037310080461}
+set WAT23(kp4m,r_SDSS_k1018,ccd1) \
+          {20918 0.006692052941147151 0.005178282548137254 -0.00557912133881812}
+set WAT24(kp4m,r_SDSS_k1018,ccd1) \
+          {4 0.01880958262961901 0.01201830197397397 -0.1251208497957307 0.0123}
+set WAT25(kp4m,r_SDSS_k1018,ccd1) \
+          {0503036866541 -0.02805430145155008 -0.1271551994327334 "            }
+
+set WCSASTRM(kp4m,i_SDSS_k1019,ccd1) \
+          {kp4m.20000612T093435 (TR37 i SDSS k1019) by A. LaCluyze 2001-01-25}
+set CTYPE1(kp4m,i_SDSS_k1019,ccd1) RA---TNX
+set CTYPE2(kp4m,i_SDSS_k1019,ccd1) DEC--TNX
+set CRPIX1(kp4m,i_SDSS_k1019,ccd1) 4292.2918284867
+set CRPIX2(kp4m,i_SDSS_k1019,ccd1) 4005.95377877606
+set CD1_1(kp4m,i_SDSS_k1019,ccd1) 8.32690203103052E-7
+set CD2_2(kp4m,i_SDSS_k1019,ccd1) 5.50607170508388E-7
+set CD1_2(kp4m,i_SDSS_k1019,ccd1) -7.1555254295132E-5
+set CD2_1(kp4m,i_SDSS_k1019,ccd1) -7.1192838238970E-5
+set WAT01(kp4m,i_SDSS_k1019,ccd1) {system=image}
+set WAT11(kp4m,i_SDSS_k1019,ccd1) \
+          {wtype=tnx axtype=ra lngcor = "3. 4. 4. 2. -0.01001659692223197 0.284}
+set WAT12(kp4m,i_SDSS_k1019,ccd1) \
+          {7066862620854 0.157572348838348 0.305558825076752 -0.002953351430104}
+set WAT13(kp4m,i_SDSS_k1019,ccd1) \
+          {825 0.01593516199402384 0.003434309891927457 -0.1172012900749244 0.0}
+set WAT14(kp4m,i_SDSS_k1019,ccd1) \
+          {08169282348455745 -5.637278150066555E-4 -0.01350549015162033 0.01115}
+set WAT15(kp4m,i_SDSS_k1019,ccd1) \
+          {172960605751 -0.103617993709371 -0.0225714646560964 "               }
+set WAT21(kp4m,i_SDSS_k1019,ccd1) \
+          {wtype=tnx axtype=dec latcor = "3. 4. 4. 2. -0.01001659692223197 0.28}
+set WAT22(kp4m,i_SDSS_k1019,ccd1) \
+          {47066862620854 0.157572348838348 0.305558825076752 -0.00404989197058}
+set WAT23(kp4m,i_SDSS_k1019,ccd1) \
+          {411 0.006646565551033001 0.008790724635097976 -0.01395161040537251 0}
+set WAT24(kp4m,i_SDSS_k1019,ccd1) \
+          {.0211381548734498 0.01288487117074894 -0.1227978356600282 0.00246782}
+set WAT25(kp4m,i_SDSS_k1019,ccd1) \
+          {8940591027 -0.03402654991167234 -0.1085769160656911 "               }
+
+# Default astrometery.
+set WCSASTRM(kp4m,ccd1) $WCSASTRM(kp4m,V,ccd1)
+set CTYPE1(kp4m,ccd1) $CTYPE1(kp4m,V,ccd1)
+set CTYPE2(kp4m,ccd1) $CTYPE2(kp4m,V,ccd1)
+set CRPIX1(kp4m,ccd1) $CRPIX1(kp4m,V,ccd1)
+set CRPIX2(kp4m,ccd1) $CRPIX2(kp4m,V,ccd1)
+set CD1_1(kp4m,ccd1) $CD1_1(kp4m,V,ccd1)
+set CD2_2(kp4m,ccd1) $CD2_2(kp4m,V,ccd1)
+set CD1_2(kp4m,ccd1) $CD1_2(kp4m,V,ccd1)
+set CD2_1(kp4m,ccd1) $CD2_1(kp4m,V,ccd1)
+set WAT01(kp4m,ccd1) $WAT01(kp4m,V,ccd1)
+set WAT11(kp4m,ccd1) $WAT11(kp4m,V,ccd1)
+set WAT12(kp4m,ccd1) $WAT12(kp4m,V,ccd1)
+set WAT13(kp4m,ccd1) $WAT13(kp4m,V,ccd1)
+set WAT14(kp4m,ccd1) $WAT14(kp4m,V,ccd1)
+set WAT15(kp4m,ccd1) $WAT15(kp4m,V,ccd1)
+set WAT21(kp4m,ccd1) $WAT21(kp4m,V,ccd1)
+set WAT22(kp4m,ccd1) $WAT22(kp4m,V,ccd1)
+set WAT23(kp4m,ccd1) $WAT23(kp4m,V,ccd1)
+set WAT24(kp4m,ccd1) $WAT24(kp4m,V,ccd1)
+set WAT25(kp4m,ccd1) $WAT25(kp4m,V,ccd1)
+
+set WCSASTRM(kp09m,ccd1) $WCSASTRM(kp09m,V,ccd1)
+set CTYPE1(kp09m,ccd1) $CTYPE1(kp09m,V,ccd1)
+set CTYPE2(kp09m,ccd1) $CTYPE2(kp09m,V,ccd1)
+set CRPIX1(kp09m,ccd1) $CRPIX1(kp09m,V,ccd1)
+set CRPIX2(kp09m,ccd1) $CRPIX2(kp09m,V,ccd1)
+set CD1_1(kp09m,ccd1) $CD1_1(kp09m,V,ccd1)
+set CD2_2(kp09m,ccd1) $CD2_2(kp09m,V,ccd1)
+set CD1_2(kp09m,ccd1) $CD1_2(kp09m,V,ccd1)
+set CD2_1(kp09m,ccd1) $CD2_1(kp09m,V,ccd1)
+set WAT01(kp09m,ccd1) $WAT01(kp09m,V,ccd1)
+set WAT11(kp09m,ccd1) $WAT11(kp09m,V,ccd1)
+set WAT12(kp09m,ccd1) $WAT12(kp09m,V,ccd1)
+set WAT13(kp09m,ccd1) $WAT13(kp09m,V,ccd1)
+set WAT14(kp09m,ccd1) $WAT14(kp09m,V,ccd1)
+set WAT15(kp09m,ccd1) $WAT15(kp09m,V,ccd1)
+set WAT21(kp09m,ccd1) $WAT21(kp09m,V,ccd1)
+set WAT22(kp09m,ccd1) $WAT22(kp09m,V,ccd1)
+set WAT23(kp09m,ccd1) $WAT23(kp09m,V,ccd1)
+set WAT24(kp09m,ccd1) $WAT24(kp09m,V,ccd1)
+set WAT25(kp09m,ccd1) $WAT25(kp09m,V,ccd1)
+
+# Default when there is no astrometry.
+set WCSASTRM(ccd1) {None available}
+set CTYPE1(ccd1)  LINEAR; set CTYPE2(ccd1)  LINEAR
+set CRVAL1(ccd1)  1024.5; set CRVAL2(ccd1)  2048.5
+set CRPIX1(ccd1)  1024.5; set CRPIX2(ccd1)  2048.5
+set CD1_1(ccd1) 1.; set CD2_2(ccd1) 1.; set CD1_2(ccd1) 0.; set CD2_1(ccd1) 0.

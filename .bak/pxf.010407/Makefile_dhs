@@ -1,0 +1,121 @@
+#///////////////////////////////////////////////////////////////////////////////
+#// primary target(s)
+#///////////////////////////////////////////////////////////////////////////////
+NAME = pxf
+UTIL = dhsUtil
+UTIL_VERSION := $(shell /bin/grep 'define _dhsImpl_H_' dhsImplementationSpecifics.h | /bin/awk '{print $$3}')
+HERE := $(shell /bin/pwd)
+
+#///////////////////////////////////////////////////////////////////////////////
+#// secondary dependencies
+#///////////////////////////////////////////////////////////////////////////////
+LIBNAME = lib$(NAME)
+LIBUTIL = lib$(UTIL)
+SHAREDUTILLIB = $(LIBNAME).so.$(UTIL_VERSION)
+
+#///////////////////////////////////////////////////////////////////////////////
+#// dependencies
+#///////////////////////////////////////////////////////////////////////////////
+MONSOON_HOME  := $(shell /bin/echo $$MONSOON_HOME)
+MONSOON_BIN    = $(MONSOON_HOME)/bin
+MONSOON_CFG    = $(MONSOON_HOME)/cfg
+MONSOON_DATA   = $(MONSOON_HOME)/data
+MONSOON_DOC    = $(MONSOON_HOME)/doc
+MONSOON_ETC    = $(MONSOON_HOME)/etc
+MONSOON_INC    = $(MONSOON_HOME)/inc
+MONSOON_LIB    = $(MONSOON_HOME)/lib
+MONSOON_SBIN   = $(MONSOON_HOME)/sbin
+MONSOON_SRC    = $(MONSOON_HOME)/src
+MONSOON_DHSSRC = $(MONSOON_SRC)/Util/dhsLibraries
+MONSOON_DHSLIB = $(MONSOON_LIB)/dhsLibs
+
+#///////////////////////////////////////////////////////////////////////////////
+#// stuff that's precious or to keep
+#///////////////////////////////////////////////////////////////////////////////
+.PRECIOUS:	$(SHAREDUTILLIB)
+.KEEP_STATE:
+
+#///////////////////////////////////////////////////////////////////////////////
+#// includes, flags and libraries
+#///////////////////////////////////////////////////////////////////////////////
+CINCS  = -I$(HERE) -I$(MONSOON_INC) -I/usr/local/include
+CFLAGS = -O2 -Wall # -DDEBUG -g
+
+#///////////////////////////////////////////////////////////////////////////////
+#// list of source and include files
+#///////////////////////////////////////////////////////////////////////////////
+UTILSRC := $(shell /bin/ls $(UTIL)*.c)
+UTILINC := $(shell /bin/ls $(UTIL)*.h)
+
+#///////////////////////////////////////////////////////////////////////////////
+#// targets
+#///////////////////////////////////////////////////////////////////////////////
+HELP:
+	/usr/bin/clear
+	@echo ""
+	@echo "$(LIBUTIL) $(UTIL_VERSION) Makefile.Linux"
+	@echo "(c) 2002, AURA Inc. All rights reserved."
+	@echo ""
+	@echo "The following targets are available:"
+	@echo ""
+	@echo "   all clean doc help install"
+	@echo ""
+	@echo "To re-build the library, use: % make everything"
+	@echo ""
+
+all: SharedTclp SharedUtil $(SHAREDUTILLIB)
+
+clean:
+	/bin/rm -rf SharedTclp SharedUtil *.o
+	/bin/rm -rf .make.state .nse_depinfo
+
+realclean:
+	/bin/rm -rf SharedTclp SharedUtil *.o
+	/bin/rm -rf $(MONSOON_DHSLIB)/$(LIBUTIL)*
+	/bin/rm -rf .archive/* *~
+	/bin/rm -rf .make.state .nse_depinfo  $(SHAREDUTILLIB)
+
+doc:
+	/bin/rm -rf $(HERE)/$(UTIL).tex
+	@for target in $(UTILINC) $(UTILSRC) ; do\
+	 docline=`/bin/grep __doc__ $$target | /bin/awk -F__doc__ '{print $$2}'` ;\
+	 /bin/echo $$docline >>  $(HERE)/$(UTIL).TEX ;\
+	done
+	/bin/sed '1,$$s/<<VERSION>>/$(UTIL_VERSION)/g' ./$(UTIL).TEX >> ./$(UTIL).tex
+	/bin/rm -rf $(HERE)/$(UTIL).TEX
+
+everything:
+	/bin/rm -rf $(MONSOON_DHSLIB)/$(LIBUTIL)*
+	/usr/bin/gmake clean
+	/usr/bin/gmake all
+	/usr/bin/gmake doc
+	/usr/bin/gmake install
+
+help: HELP
+
+install: all $(MONSOON_INC) $(MONSOON_DHSLIB) $(MONSOON_DOC) 
+	/bin/rm -rf $(MONSOON_DOC)/$(UTIL).tex
+	/bin/cp -f ./$(UTIL).tex $(MONSOON_DOC)/$(UTIL).tex
+	/bin/rm -rf $(MONSOON_INC)/$(UTIL).h
+	/bin/ln -sf $(MONSOON_DHSSRC)/$(UTIL).h $(MONSOON_INC)/$(UTIL).h
+	/bin/rm -rf $(MONSOON_LIB)/$(LIBUTIL).so*
+	/bin/mv $(SHAREDUTILLIB) $(MONSOON_DHSLIB)/
+	/bin/ln -sf ../lib/dhsLibs/$(SHAREDUTILLIB) $(MONSOON_LIB)/$(LIBUTIL).so
+
+
+#///////////////////////////////////////////////////////////////////////////////
+#// leave this stuff alone
+#///////////////////////////////////////////////////////////////////////////////
+$(MONSOON_DHSLIB):
+	/bin/mkdir $(MONSOON_DHSLIB)
+
+$(UTIL).h:
+	/bin/ln -sf ../$(UTIL).h ./$(UTIL).h
+
+$(SHAREDUTILLIB): $(UTILSRC:%.c=SharedUtil/%.o)
+	/usr/bin/ld -shared -o $@ $? -lc -ldl
+SharedUtil/%.o: %.c $(UTILINC)
+	/usr/bin/gcc $(CINCS) $(CFLAGS) -fpic -shared -c $< -o $@
+SharedUtil:
+	/bin/mkdir $@
+	chmod 777 $@

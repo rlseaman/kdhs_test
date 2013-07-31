@@ -1,0 +1,992 @@
+# RTD.GUI -- Default NEWFIRM RTD client GUI with message panel for trapping 
+# debug output, or executing Tcl commands.
+
+# Reset the Widget Server.  Must be the first command so we restart correctly.
+reset-server
+
+# Set the widgets and resources to be used in the base GUI.
+set UIObjects(RTDStatus) { 	\
+	toplevel	Layout		controlPanel\
+        controlPanel    Group           menubarGroup\
+        controlPanel    Group           rtdGroup\
+        controlPanel    Group           smcGroup\
+        controlPanel    Group           statusGroup\
+\
+        controlPanel    Frame           statusFrame\
+        statusFrame     Label           statusStr\
+        controlPanel    Frame           diskmonFrame\
+        diskmonFrame    Layout          diskmonLayout\
+        diskmonLayout   Label           diskuseStr\
+        diskmonLayout   Frame           diskuseFrame\
+        diskuseFrame    Gterm           diskuse\
+\
+        menubarGroup    Layout          menubarLayout\
+        menubarLayout   MenuButton      fileButton\
+        menubarLayout   MenuButton      editButton\
+        menubarLayout   MenuButton      optsButton\
+        menubarLayout   Command         helpButton\
+        menubarLayout   Command         quitButton\
+\
+        rtdGroup     	Layout          rtdLayout\
+        rtdLayout       Group           rtdResGroup\
+        rtdLayout       Group           rtdOptsGroup\
+\
+        rtdOptsGroup	Layout		optsLayout\
+        optsLayout    	TextToggle      dispEnable\
+        optsLayout    	TextToggle      statEnable\
+        optsLayout    	TextToggle      hdrEnable\
+        optsLayout    	Label      	dframeLabel\
+        optsLayout   	MenuButton      dframeButton\
+        optsLayout    	Label      	stdimgLabel\
+        optsLayout   	MenuButton      stdimgButton\
+\
+        rtdResGroup	Layout		resLayout\
+        resLayout    	Label      	expidLab\
+        resLayout    	Label      	expidVal\
+        resLayout    	Label      	obsidLab\
+        resLayout    	Label      	obsidVal\
+        resLayout    	Label      	meanLab\
+        resLayout    	Label      	meanVal\
+        resLayout    	Label      	sigmaLab\
+        resLayout    	Label      	sigmaVal\
+        resLayout    	Label      	minLab\
+        resLayout    	Label      	minVal\
+        resLayout    	Label      	maxLab\
+        resLayout    	Label      	maxVal\
+\
+\
+        smcGroup     	Layout          smcLayout\
+        smcLayout    	Label      	ctimeLab\
+        smcLayout    	Label      	ctimeVal\
+        smcLayout    	Label      	utimeLab\
+        smcLayout    	Label      	utimeVal\
+        smcLayout    	Label      	memKeyLab\
+        smcLayout    	Label      	memKeyVal\
+        smcLayout    	Label      	shmIDLab\
+        smcLayout    	Label      	shmIDVal\
+        smcLayout    	Label      	sizeLab\
+        smcLayout    	Label      	sizeVal\
+        smcLayout    	Label      	memUseLab\
+        smcLayout    	Label      	memUseVal\
+        smcLayout    	Label      	memAvailLab\
+        smcLayout    	Label      	memAvailVal\
+        smcLayout    	Label      	nprocLab\
+        smcLayout    	Label      	nprocVal\
+        smcLayout    	Label      	pageUseLab\
+        smcLayout    	Label      	pageUseVal\
+        smcLayout   	Command         logButton\
+        smcLayout   	Command         updateButton\
+        smcLayout	Group           pageGroup\
+        smcLayout    	Label      	pollLab\
+        smcLayout    	Frame      	pollFrame\
+        pollFrame    	AsciiText      	pollInterval\
+\
+        pageGroup     	Layout          pageLayout\
+	pageLayout	Frame		ptabFrame\
+	pageLayout	MultiList	pageTable\
+
+}
+
+
+set UIResources(RTDStatus) { \
+
+    !#######################################################
+    ! Define some global resources for the main menu panels.
+    !#######################################################
+    *beNiceToColormap:				false
+    *allowShellResize:				true
+
+    *background:				#eeeee8
+    *Text*background:				#eeeee8
+    *Command.background:			#eeeee8
+    *Label.background:				#eeeee8
+    *MenuButton.background:			#eeeee8
+    *Toggle.background:				#eeeee8
+
+    *Command.foreground:			black
+    *Label.foreground:				black
+    *MenuButton.foreground:			black
+    *Toggle.foreground:				black
+    *SimpleMenu*foreground:			black
+
+    *Command.highlightThickness:		2
+    *Label.highlightThickness:			0
+    *MenuButton.highlightThickness:		2
+    *Toggle.highlightThickness:			2
+
+    *Label.borderWidth:				0
+    *Label.shadowWidth:				0
+    *Command.shadowWidth:			1
+    *Toggle.shadowWidth:			1
+    *MenuButton.shadowWidth:			1
+
+    *Arrow.width:				16
+    *Arrow.height:				25
+    *Arrow.foreground:				#ddddd8
+    *Arrow.background:				#eeeee8
+
+    *TextToggle.frameType:   			chiseled
+    *TextToggle.frameWidth:   			2
+    *TextToggle.onIcon:   			square1s
+    *TextToggle.offIcon:   			square0s
+
+    *SmeBSB.leftMargin:				10
+
+    *Group.shrinkToFit:				True
+
+    !------------------------------------------------------------
+    ! Define resources to take advantage of the 3D scrollbar look
+    !------------------------------------------------------------
+    *Scrollbar*background:			#eeeee8
+    *Scrollbar*width:				15
+    *Scrollbar*height:				15
+    *Scrollbar*shadowWidth:			2
+    *Scrollbar*cursorName:			top_left_arrow
+    *Scrollbar*pushThumb:			true
+
+    !-------------------------------------
+    ! Define new fonts to use for the GUI.
+    !-------------------------------------
+    *font:					7x13bold
+    *Command.font:      			7x13bold
+    *MenuButton.font:   			7x13bold
+    *Toggle.font:       			7x13bold
+    *Label.font:        			7x13bold
+    *TextToggle.font:   			7x13bold
+    *SimpleMenu*font:				7x13bold
+
+
+    !#################################
+    ! Define the main monitor window. 
+    !#################################
+    *rtdStatus.title:                           NEWFIRM RTD/Status Client
+    *RTDStatus.title:                           NEWFIRM RTD/Status Client
+    *RTDStatus.geometry:                        +0+0
+    *RTDStatus.width:                           640
+    *RTDStatus.height:                          625
+
+    !*controlPanel*font:                         7x13bold
+    *controlPanel.geometry:                     =564x200+0+5
+    *controlPanel.frameWidth:                   4
+    *controlPanel.highlightThickness:           0
+    *controlPanel.highlightThickness:           0
+    *controlPanel.frameType:                    chiseled
+    *controlPanel.innerOffset:                  5
+    *controlPanel.outerOffset:                  5
+    *controlPanel.layout: vertical { \
+        -1 \
+        menubarGroup < +inf * > \
+        7 \
+        rtdGroup < +inf * -inf > \
+        5 \
+        smcGroup < +inf * -inf > \
+        -2 \
+        horizontal { \
+            5 \
+            statusFrame  < +inf * > \
+            diskmonFrame  \
+            5 \
+        } \
+        -2 \
+    }
+    *statusFrame.frameWidth:                    2
+    *statusFrame.frameType:                     chiseled
+    *statusStr.label:                           Ready....
+    *statusStr.justify:                         Center
+
+
+    *diskmonFrame.frameWidth:                   2
+    *diskmonFrame.frameType:                    chiseled
+    *diskmonLayout.layout: horizontal {\
+        diskuseStr < +inf -inf * > 2 \
+        diskuseFrame < +inf -inf * > \
+    }
+    *diskmonLayout*borderWidth:                 0
+    *diskuseStr.width:                          120
+    *diskuseStr.label:                          Disk Usage:    
+    *diskuseStr.justify:                        left
+    *diskuseFrame.frameWidth:                   2
+    *diskuseFrame.frameType:                    sunken
+    *diskuse.width:                             100
+    *diskuse.height:                            15
+
+
+
+    !-----------------------------
+    ! Menubar widget resources
+    !-----------------------------
+    *menubarGroup.borderWidth:                  0
+    *menubarGroup.outerOffset:                  0
+    *menubarGroup.innerOffset:                  5
+    *menubarGroup.label:
+    *menubarGroup*frameType:                    raised
+    *menubarGroup*frameWidth:                   2
+    *menubarGroup*shadowWidth:                  2
+    *menubarGroup.location:                     0 0 460 40
+    *menubarLayout.borderWidth:                 0
+    *menubarLayout.layout: horizontal { \
+        -1 \
+        fileButton 3 < -3 > \
+        editButton 3 < -3 > \
+        optsButton 5 < +inf -inf > \
+        helpButton 3 < -3 > \
+        quitButton \
+        -1 \
+    }
+    *fileButton.label:                          File
+    *fileButton.menuName:                       fileMenu
+    *editButton.label:                          Edit
+    *editButton.menuName:                       editMenu
+    *optsButton.label:                          Options
+    *optsButton.menuName:                       optsMenu
+    *helpButton.label:                          Help
+    *quitButton.label:                          Quit
+    *quitButton.font:                           7x13bold
+
+
+    !-----------------------------------
+    ! RTD Status information resources
+    !-----------------------------------
+    *rtdGroup.borderWidth:                   	0
+    *rtdGroup.outerOffset:                   	8
+    *rtdGroup.innerffset:                    	8
+    *rtdGroup.label:                         	Real-Time Display
+    *rtdGroup*Frame.frameType:               	sunken
+    *rtdGroup*Frame.frameWidth:              	2
+    *rtdGroup*borderWidth:                   	0 
+    *rtdGroup*Text*displayCaret:             	False
+    *rtdGroup*Text*scrollVertical:           	never
+    *rtdGroup*Text*scrollHorizontal:         	never
+    *rtdGroup*Text*editType:                 	edit
+    *rtdGroup*Text*height:                   	22
+    *rtdGroup*TextToggle*highlightColor:     	yellow
+    *rtdGroup.location:                      	0 0 564 200
+    *rtdGroup*Label.justify:                 	left
+    *rtdGroup*Label.height:                  	22
+    *rtdLayout.layout: vertical { \
+        3 \
+        rtdOptsGroup < +inf * -inf > \
+        -5 \
+        rtdResGroup < +inf * -inf > \
+        1 \
+     }
+
+
+
+    !-----------------------------
+    ! RTD Options resources
+    !-----------------------------
+    *rtdOptsGroup.borderWidth:                  0
+    *rtdOptsGroup.outerOffset:                  8
+    *rtdOptsGroup.innerOffset:                  8
+    *rtdOptsGroup.label:			Options
+    *rtdOptsGroup*Frame.frameType:              sunken
+    *rtdOptsGroup*Frame.frameWidth:             2
+    *rtdOptsGroup*frameType:                    chiseled
+    *rtdOptsGroup*frameWidth:                   2
+    *rtdOptsGroup*Command.shadowWidth:       	0
+    *rtdOptsGroup*MenuButton.shadowWidth:       2
+    *rtdOptsGroup*MenuButton.width:       	120
+    *rtdOptsGroup*TextToggle.frameType:         raised
+    *rtdOptsGroup*shadowWidth:                  0
+    *rtdOptsGroup.location:                     0 0 460 120
+    *rtdOptsLayout.borderWidth:                 3
+    *optsLayout.layout: vertical { \
+        3 \
+        horizontal { \
+            8 \
+	    dframeLabel 3 dframeButton \
+            3 < +inf > \
+	    stdimgLabel 3 stdimgButton \
+            8 \
+        } \
+        3 \
+        horizontal { \
+	    dispEnable < +inf * > 5 \
+	    statEnable < +inf * > 5 \
+	    hdrEnable  < +inf * > 5 \
+        } \
+        3 \
+    }
+    *dispEnable.label:               		\ Display Enable
+    *dispEnable.on:                  		True
+    *dispEnable.location:            		0 0 135 24
+    *dispEnable.alignment:           		left
+
+    *statEnable.label:               		\ Stats Enable
+    *statEnable.on:                  		True
+    *statEnable.location:            		0 0 135 24
+    *statEnable.alignment:           		left
+
+    *hdrEnable.label:               		\ Show Headers
+    *hdrEnable.on:                  		True
+    *hdrEnable.location:            		0 0 135 24
+    *hdrEnable.alignment:           		center
+
+    *dframeLabel.label:               		Display Frame:
+    *dframeLabel.justify:               	right
+    *dframeButton.label:               		1
+    *dframeButton.shadowWidth:               	0
+    *dframeButton.location:            		0 0 135 24
+    *resOptsGroup.optsLayout.dframeButton.width:       	120
+
+    *stdimgLabel.label:               		Frame Buffer:
+    *stdimgLabel.justify:               	right
+    *stdimgButton.label:               		imt4400
+    *stdimgButton.shadowWidth:               	0
+    *resOptsGroup.optsLayout.stdimgButton.width:       	120
+
+
+    !-----------------------------
+    ! RTD Results resources
+    !-----------------------------
+    *rtdResGroup.borderWidth:                  	0
+    *rtdResGroup.outerOffset:                  	8
+    *rtdResGroup.innerOffset:                  	8
+    *rtdResGroup.label:
+    *rtdResGroup*Frame.frameType:              	sunken
+    *rtdResGroup*Frame.frameWidth:             	2
+    *rtdResGroup*frameType:                    	chiseled
+    *rtdResGroup*frameWidth:                   	2
+    *rtdResGroup*shadowWidth:                  	0
+    *rtdResGroup*Label.background:              black
+    *rtdResGroup*Label.foreground:              cyan3
+    *rtdResGroup*Label.innerOffset:             3
+    *rtdResGroup.location:                     	0 0 460 110
+    *rtdResLayout*Label.background:		black
+    *rtdResLayout*background:			black
+    *rtdResLayout.borderWidth:                 	3
+    *resLayout*background:			black
+    *resLayout.layout: vertical { \
+        3 \
+        horizontal { \
+	    3 \
+    	    expidLab 3 expidVal < +inf * -inf > \
+	    3 \
+    	    obsidLab 3 obsidVal < +inf * -inf > \
+	    3 \
+        } \
+        3 \
+        horizontal { \
+    	     meanLab 3 meanVal  < +inf * >  \
+    	    sigmaLab 3 sigmaVal < +inf * >  \
+    	      minLab 3 minVal   < +inf * >  \
+    	      maxLab 3 maxVal   < +inf * >  \
+        } \
+        3 \
+    }
+    *expidLab.label:				ExpID
+    *expidLab.justify:				left
+    *expidLab.font:				7x13bold
+
+    *expidVal.label:				3.141592654
+    *expidVal.justify:				left
+    *expidVal.font:				7x13
+
+    *obsidLab.label:				ObSetID
+    *expidLab.justify:				left
+    *expidLab.font:				7x13bold
+
+    *obsidVal.label:				3.141592654
+    *osbidVal.justify:				left
+    *osbidVal.font:				7x13
+
+    *meanLab.label:				Pixel Statistics:  Mean
+    *meanLab.justify:				left
+    *meanLab.font:				7x13bold
+
+    *meanVal.label:				127.342
+    *meanVal.justify:				left
+    *meanVal.font:				7x13
+
+    *sigmaLab.label:				Sigma
+    *sigmaLab.justify:				left
+    *sigmaLab.font:				7x13bold
+
+    *sigmaVal.label:				64.234
+    *sigmaVal.justify:				left
+    *sigmaVal.font:				7x13
+
+    *minLab.label:				Pix Min:
+    *minLab.justify:				left
+    *minLab.font:				7x13bold
+
+    *minVal.label:				12
+    *minVal.justify:				left
+    *minVal.font:				7x13
+
+    *maxLab.label:				Pix Max:
+    *maxLab.justify:				left
+    *maxLab.font:				7x13bold
+
+    *maxVal.label:				1234
+    *maxVal.justify:				left
+    *maxVal.font:				7x13
+
+    *rtdResGroup.resLayout.expidLab.foreground:		yellow3
+    *rtdResGroup.resLayout.obsidLab.foreground:		yellow3
+    *rtdResGroup.resLayout.meanLab.foreground:		yellow3
+    *rtdResGroup.resLayout.sigmaLab.foreground:		yellow3
+    *rtdResGroup.resLayout.minLab.foreground:		yellow3
+    *rtdResGroup.resLayout.maxLab.foreground:		yellow3
+
+
+
+    !----------------------------------
+    ! SMC Status information resources
+    !----------------------------------
+    *smcGroup.borderWidth:                   	0
+    *smcGroup.outerOffset:                   	5
+    *smcGroup.innerffset:                    	5
+    *smcGroup.label:                         	Shared Memory Cache Status
+    *smcGroup*Frame.frameType:               	sunken
+    *smcGroup*Frame.frameWidth:              	2
+    *smcGroup*borderWidth:                   	0
+    *smcGroup*Command.shadowWidth:              2
+    *smcGroup*Label.frameType:                  sunken
+    *smcGroup*Label.shadowWidth:                0
+    *smcGroup*Label.background:                 black
+    *smcGroup*Label.foreground:                 cyan3
+    *smcGroup*Label.innerOffset:                3
+    *smcGroup*Label.height:                  	27
+    *smcGroup*Command.background:               #eeeee8
+    *smcGroup*Command.foreground:               black
+    *smcGroup.innerOffset:                  	5
+    *smcGroup*Text*displayCaret:             	False
+    *smcGroup*Text*scrollVertical:           	never
+    *smcGroup*Text*scrollHorizontal:         	never
+    *smcGroup*Text*editType:                 	edit
+    *smcGroup*Text*height:                   	22
+    *smcGroup*TextToggle*highlightColor:     	yellow
+    *smcGroup.location:                      	0 0 564 325
+    *smcLayout*background:			black
+    *smcLayout*foreground:			yellow3
+    *smcLayout.layout: vertical { \
+        8 \
+        horizontal { \
+	    8 \
+            ctimeLab 3 ctimeVal 1 < +inf > \
+            utimeLab 3 utimeVal \
+	    8 \
+        } \
+        horizontal { \
+	    8 \
+            memKeyLab 3 memKeyVal 1 < +inf > \
+	    shmIDLab  3 shmIDVal 1 < +inf > \
+	    sizeLab   3 sizeVal \
+	    8 \
+        } \
+        horizontal { \
+	    8 \
+            memUseLab   3   memUseVal 1 < +inf > \
+            memAvailLab 3 memAvailVal 1 < +inf > \
+	    nprocLab    3    nprocVal 1 < +inf > \
+            pageUseLab  3  pageUseVal \
+	    8 \
+        } \
+	12 \
+        horizontal { \
+            pageGroup < +inf * -inf > \
+        } \
+        -1 \
+        horizontal { \
+            8 \
+            pollLab 5 pollFrame \
+	    5 < +inf > \
+	    logButton  \
+            2 \
+	    updateButton  \
+            8 \
+        } \
+        5 \
+     }
+    *ctimeLab.label:			Created:\ 
+    *ctimeLab.justify:			left
+    *ctimeLab.font:			7x13bold
+    *ctimeVal.label:			Thu Mar 23 10:55:42 2006
+    *ctimeVal.justify:			left
+    *ctimeVal.font:			7x13
+
+    *utimeLab.label:			Last Updated:\ 
+    *utimeLab.justify:			right
+    *utimeLab.font:			7x13bold
+    *utimeVal.label:			Thu Mar 23 10:55:42 2006
+    *utimeVal.justify:			left
+    *utimeVal.font:			7x13
+
+    *memKeyLab.label:			MemKey:\ 
+    *memKeyLab.justify:			left
+    *memKeyLab.font:			7x13bold
+    *memKeyVal.label:			0x305c40b
+    *memKeyVal.justify:			left
+    *memKeyVal.font:			7x13
+
+    *shmIDLab.label:			ShmID:\ 
+    *shmIDLab.justify:			left
+    *shmIDLab.font:			7x13bold
+    *shmIDVal.label:			389054467
+    *shmIDVal.justify:			left
+    *shmIDVal.font:			7x13
+
+    *sizeLab.label:			SMC Size:\ 
+    *sizeLab.justify:			right
+    *sizeLab.font:			7x13bold
+    *sizeVal.label:			122880 bytes
+    *sizeVal.justify:			left
+    *sizeVal.font:			7x13
+
+    *memUseLab.label:			Mem Used:\ 
+    *memUseLab.justify:			left
+    *memUseLab.font:			7x13bold
+    *memUseVal.label:			22 Mb
+    *memUseVal.justify:			left
+    *memUseVal.font:			7x13
+
+    *memAvailLab.label:			Avail:\ 
+    *memAvailLab.justify:		left
+    *memAvailLab.font:			7x13bold
+    *memAvailVal.label:			1943 Mb
+    *memAvailVal.justify:		left
+    *memAvailVal.font:			7x13
+
+    *nprocLab.label:			NumProcs:\ 
+    *nprocLab.justify:			center
+    *nprocLab.font:			7x13bold
+    *nprocVal.label:			2
+    *nprocVal.justify:			left
+    *nprocVal.font:			7x13
+
+    *pageUseLab.label:			Segs Used:\ 
+    *pageUseLab.justify:		right
+    *pageUseLab.font:			7x13bold
+    *pageUseVal.label:			16 of 2048
+    *pageUseVal.justify:		left
+    *pageUseVal.font:			7x13
+
+    *pollLab.label:	   		Polling Interval: 
+    *pollInterval*string:               3
+    *pollInterval*height:               22
+    *pollInterval*width:                36
+    *pollInterval*Text*editType:        edit
+    *updateButton.label:		Update Now
+    *logButton.label:			Show Complete Log
+    *logButton.sensitive:		False
+
+    *smcGroup.smcLayout.ctimeLab.foreground:		yellow3
+    *smcGroup.smcLayout.utimeLab.foreground:		yellow3
+    *smcGroup.smcLayout.memKeyLab.foreground:		yellow3
+    *smcGroup.smcLayout.shmIDLab.foreground:		yellow3
+    *smcGroup.smcLayout.sizeLab.foreground:		yellow3
+    *smcGroup.smcLayout.memUseLab.foreground:		yellow3
+    *smcGroup.smcLayout.memAvailLab.foreground:		yellow3
+    *smcGroup.smcLayout.nprocLab.foreground:		yellow3
+    *smcGroup.smcLayout.pageUseLab.foreground:		yellow3
+    *smcGroup.smcLayout.pollLab.foreground:		yellow3
+
+    !-----------------------------
+    ! Segment/Page List resources
+    !-----------------------------
+    *pageGroup.borderWidth:                  0
+    *pageGroup.outerOffset:                  8
+    *pageGroup.innerOffset:                  8
+    *pageGroup.label:			     Segment Log
+    *pageGroup*Frame.frameType:              sunken
+    *pageGroup*Frame.frameWidth:             2
+    *pageGroup*frameType:                    chiseled
+    *pageGroup*frameWidth:                   2
+    *pageGroup*shadowWidth:                  2
+    *pageGroup.location:                     0 0 460 400
+    *pageLayout.borderWidth:                 3
+    *pageLayout.layout: horizontal { \
+        3 \
+        ptabFrame \
+        3 \
+    }
+
+
+
+
+    !-----------------------------------------------------
+    !  Menu resources giving a shadow effect on dividers.
+    !-----------------------------------------------------
+    *RTDStatus*SimpleMenu*background:			gray75
+    *RTDStatus*SimpleMenu*foreground:			black
+    *RTDStatus*SimpleMenu.borderWidth:			1
+    *RTDStatus*SimpleMenu.menuLabel.foreground:		black
+    *RTDStatus*SimpleMenu.line1.foreground:		gray61
+    *RTDStatus*SimpleMenu.line2.foreground:		gray91
+    *RTDStatus*SimpleMenu.line3.foreground:		gray61
+    *RTDStatus*SimpleMenu.line4.foreground:		gray91
+    *RTDStatus*SimpleMenu.line5.foreground:		gray61
+    *RTDStatus*SimpleMenu.line6.foreground:		gray91
+    *RTDStatus*SimpleMenu.line7.foreground:		gray61
+    *RTDStatus*SimpleMenu.line8.foreground:		gray91
+    *RTDStatus*SimpleMenu.line9.foreground:		gray61
+    *RTDStatus*SimpleMenu.line10.foreground:		gray91
+    *RTDStatus*SimpleMenu.line11.foreground:		gray61
+    *RTDStatus*SimpleMenu.line12.foreground:		gray91
+    *RTDStatus*SimpleMenu.line13.foreground:		gray61
+    *RTDStatus*SimpleMenu.line14.foreground:		gray91
+    *RTDStatus*SimpleMenu.line15.foreground:		gray61
+
+
+}
+
+set UIActCallbacks(RTDStatus)   { }
+set UIDeactCallbacks(RTDStatus) { }
+
+
+################################################################################
+# Global Variables.
+################################################################################
+
+set configPath		"./"		;# config file path
+set defaultConfig	none		;# startup default configuration
+
+set Module(arg)		    	{}	;# user configuration files
+set config(task)	    	{}	;# task configuration array
+set config(task,widget)	    	{}	;# widget configuration array
+set config(task,Realized)   	{}	;# module has been realized
+set config(task,Activated)  	{}	;# module has been activated
+
+set debug 		    	0	;# it ain't the same w/out a debug flag
+set err_msgs		    	""
+
+
+# Constants
+#------------
+
+set UbarHeight		    30		;# user menubar height
+
+
+
+################################################################################
+# Bootstrap procedures used during the startup process.
+################################################################################
+
+# Given the max number of widgets we'll be using create the object definition
+# for the GUI we can append to the UIObjects string before startup.
+
+proc BuildObjects args {
+    global UIObjects UIResources
+
+    set widgets ""
+
+    # Append the objects to the object list.
+    append UIObjects(RTDStatus) $widgets
+}
+
+
+# Load the .dhs_rc config file.
+proc LoadConfigFile args {
+    global dhs_rc defaultConfig configPath err_msgs
+
+    # If we have a .newfirm file use it for the startup.
+    # the GUI resource values
+    set file $dhs_rc
+    if { [file exists $file] } {
+	if { [ catch {source $file} err] } {
+	    print ".dhs_rc file read error\n$err"
+	    append err_msgs ".dhs_rc file read error\n$err"
+	}
+    }
+}
+
+# Read the named UI configuration file.
+proc ReadConfigFile { fname args } {
+   
+    set fd [ open $fname r ]
+
+    # Read the config file a line at a time so we can strip comments and
+    # blank lines to make the parsing easier.
+    set uidef ""
+    while { ! [ eof $fd ] } {
+	gets $fd line
+
+	# Strip any comments and blank lines.
+	if { [ string first "#" $line ] >= 0 } {
+	    set line [ string range $line 0 [ expr [string first "#" $line]-1] ]
+	    set line [ string trimright $line ]
+	}
+	if { $line == "" } { continue } 
+
+	# Append the line to the output description.
+	set uidef [ format "%s\n%s" $uidef $line ]
+    }
+
+    close $fd
+    return $uidef
+}
+
+# Scan the config directories getting a list of User-UI files.
+proc ScanConfigDirs args {
+    global Module configPath UIObjects UIResources UIActCallbacks
+    global gvar err_msgs
+
+    set path [ format "./:%s" $configPath ]
+    foreach dir	[ split $path : ] { 
+	set ui_files [ glob -nocomplain [ format "%s/*.ui" $dir ] ]
+	foreach fil $ui_files {
+	    set task [ file tail [ file rootname $fil ] ]
+	    if { ! [info exists Module($task) ] } {
+	        set Module($task) [ format "%s" $fil ]
+
+		# Open the UI file to set any objects/resources defined.
+		# This will also pick up any callback procedures declared.
+		set text [ ReadConfigFile $fil ]
+
+		if {[catch { eval $text } err] } {
+		    print "'${task}.ui' file bootstrap error\n'$err'"
+	    	    append err_msgs ".xgtermrc file read error\n$err"
+		} else {
+		    if {[info exists Objects]} {
+			set UIObjects($task) $Objects
+			unset Objects
+		    }
+		    if {[info exists Resources]} {
+			set UIResources($task) $Resources
+			unset Resources
+		    }
+		    if {[info exists ActivateCallbacks]} {
+			set UIActCallbacks($task) $ActivateCallbacks
+			unset ActivateCallbacks
+		    }
+		    if {[info exists DeactivateCallbacks]} {
+			set UIDeactCallbacks($task) $DeactivateCallbacks
+			unset DeactivateCallbacks
+		    }
+		}
+	    }
+	}
+	set ui_files ""
+    }
+}
+
+#==============================================================================
+# Initialize the widget tree.
+#==============================================================================
+
+proc InitWidgetTree args {
+    global UIObjects UIResources
+
+    # Initialize the string with the base GUI objects/resources.
+    set guiResources \
+        [format "RTDStatus*objects:%s\n%s" \
+	    $UIObjects(RTDStatus) $UIResources(RTDStatus)]
+
+    # Add a new objects description for each of the plugins found so we can
+    # create them by name later rather that with the defaults.
+    foreach task [array names UIObjects] {
+	if {$task != "RTDStatus"} {
+	    set guiResources \
+	        [ format "%s\n\n*%s_objects:%s\n%s" \
+		    $guiResources $task \
+		    $UIObjects($task) $UIResources($task) ]
+	}
+    }
+
+    # Define all of the UI objects and resources.
+    appInitialize rtdStatus RTDStatus $guiResources
+}
+
+#==============================================================================
+# Realize a plugin module, i.e. create it's objects and attach callbacks.
+# We only do this once and set a flag to indicate the objects have been 
+# created so we don't do it on subsequent realizations.
+#==============================================================================
+
+proc Realize { module args } {
+    global config UIActCallbacks UIObjects
+
+    if { [info exists config($module,Realized)] } {
+	return
+    }
+
+    # Create any widgets for the module.  We only do this once and set a
+    # flag to indicate the objects have been created so we don't do it on
+    # subsequent realizations.
+    if { [info exists UIObjects($module)] } {
+        createObjects [format "%s_objects" $module]
+        reset-server
+    }
+
+    # Add any callback that are defined for procedures in the module.
+    if { [info exists UIActCallbacks($module)] } {
+	foreach cb $UIActCallbacks($module) {
+	    eval $cb
+	}
+    }
+
+    set config($module,Realized) 1
+}
+
+
+
+
+################################################################################
+# Bootstrap the GUI.
+################################################################################
+
+# Load the .xgtermrc config file.
+#LoadConfigFile
+
+# Scan the config directories getting a list of User-UI files.
+#ScanConfigDirs
+
+# Create the userbar widgets based on the number of widgets defined.
+BuildObjects
+
+# Initialize the widget tree.
+InitWidgetTree
+
+# Realize the plugins with widgets needed for the base GUI.  All other 
+# modules have already loaded their procedures so we can automatically
+# access e.g. debug print routines at this point.
+Realize tclShell
+Realize warning
+Realize filename
+Realize log
+
+
+################################################################################
+# Crank it up...
+################################################################################
+
+# Create the objects and initialize the Gterm widgets in the main GUI.
+# We will create the objects for plugin modules when they are realized to
+# speed startup times.
+
+createObjects
+send diskuse setGterm ; send diskuse activate
+
+
+# Setup the close-window button
+createBitmap CloseBM 16 16 {
+    0x00,0x00,0xfc,0x3f,0x02,0x60,0x02,0x50,0xf2,0x6f,0xf2,0x5f,0xf2,0x6f,0xf2,
+    0x5f,0xf2,0x6f,0xf2,0x5f,0xf2,0x6f,0xf2,0x5f,0xaa,0x6a,0x54,0x55,0xfc,0x3f,
+    0x00,0x00}
+
+
+################################################################################
+# Menu Definitions
+################################################################################
+
+set fileMenuDescription {
+    {"File Options" 		f.title     }
+    {				f.dblline   }
+    {"Print..."  		f.exec  { Print			} }
+    {"Print to device..."	f.exec  { openDialog print 	} }
+    {				f.dblline			  }
+    {"Show message log"		f.exec  { send log map          } }
+    {"Exec host command..."  	f.exec  { openDialog command	} }
+    {"Debug Tcl Shell"		f.exec  { tclOpen 		} }
+    {				f.dblline			  }
+    {"Redraw"  			f.exec  { GKey r		} }
+    {"Help"  			f.exec  { GKey ?		} }
+    {"Quit"  			f.exec  { Quit 			} }
+}
+
+set configMenuDescription {
+    {"GUI Configuration Options"	f.title     }
+    {					f.dblline   }
+    {"Add current config to menubar" 	f.exec  { } }
+    {"Rescan .dhs_rc file" 		f.exec  { } }
+    {"Save to .dhs_rc file" 		f.exec  { } }
+    {"Load UI config file" 		f.exec  { } }
+}
+
+
+
+################################################################################
+# Utility Callbacks
+################################################################################
+
+# Procedures for sending client cursor commands.
+proc GKey { key args } { send client gkey $key   }
+proc GCmd args         { send client gcmd $args  }
+
+# Wrapper routine to execute a callback command while ignoring the extra
+# arguments from the widget such as widget name, mode, etc.
+proc Exec { cmd args } { eval $cmd		 }
+
+# Procedures to test True/False strings in resources.
+proc true  { v } \
+   { expr { $v=="true"  || $v=="True"  || $v=="TRUE"  || $v==1 || $v=="yes" }
+}
+proc false { v } \
+   { expr { $v=="false" || $v=="False" || $v=="FALSE" || $v==0 || $v=="no"  }
+}
+
+# No-op procedure for text widgets with no callbacks to swallow newline.
+proc noop args { }
+
+# Common functions.
+proc min { a b } { expr {($a < $b) ? $a : $b} }
+proc max { a b } { expr {($a > $b) ? $a : $b} }
+
+# Dereference a variable.  E.g. in we define vars x[1-5] and want to use them
+# in a loop later we can't simply access "$x$i" to get the value of '$x1',
+# instead we use "[GetVal x$i]" to return the value of '$x1'. 'GV' is the
+# shorthand version.
+
+proc GetVal { in } { upvar $in out ; return $out }
+proc GV     { in } { upvar #0 $in out ; return $out }
+
+
+
+################################################################################
+# Standard Keystroke Procedures
+################################################################################
+
+proc Help args   {  }
+proc Quit args   { 
+    global winClose
+    GKey q 
+    if {$winClose == 1} { deactivate unmap }
+}
+
+
+
+################################################################################
+# Initialize the GUI.
+################################################################################
+
+proc Initialize args {
+}
+
+
+# Save the .xgtermrc config file.
+proc saveConfigFile { cfname args } {
+    global defaultConfig configPath
+
+    set fd [open $cfname w]
+
+    puts fd "# .xgtermrc -- XGterm Uber-GUI configuration file."
+    puts fd ""
+    puts fd "# Set the config directory paths.  This will always include the"
+    puts fd "# current directory by default, other directories are specified"
+    puts fd "# as a colon-delimited list of directories to be searched.  "
+    puts fd "# Environment variables may be used in the specification of each"
+    puts fd "# path (e.g. $HOME/.xgterm)"
+    puts fd ""
+    puts fd "set configPath\t\t"$configPath
+    puts fd "set defaultConfig\t"$defaultConfig
+    puts fd ""
+    puts fd "# Define the tasks to be installed on the configuration bar.  "
+    puts fd "# Up to 10 tasks may be specified in variables "cfgTask[0-9]","
+    puts fd "# a value of "none" means that no task is configured on that"
+    puts fd "# widget and it will not be shown."
+    puts fd ""
+    for {set i 0} {$i < 10} {incr i} {
+        puts fd "set cfgTask$i\t" [send cfgTask$i get label]
+    }
+    close fd
+}
+
+
+
+################################################################################
+#  Now that we've done it all, Initialize and start up the GUI.
+################################################################################
+activate
+Initialize

@@ -1,0 +1,4 @@
+#!/bin/csh -f 
+
+#exec valgrind --leak-check=full --show-reachable=yes ~/dhs/bin/smcmgr -console -host nfdhs-01 -mbus -dev $RTD -debug 60 -proc PanA,PanB,NOCS |& tee /tmp/smcmgr.log
+exec ~/dhs/bin/smcmgr -console -host nfdhs-01 -mbus -dev $RTD -debug 60 -proc PanA,PanB,NOCS |& tee /tmp/smcmgr.log

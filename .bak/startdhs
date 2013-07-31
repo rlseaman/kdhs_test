@@ -1,0 +1,94 @@
+#!/bin/csh -f
+#
+# STARTDHS -- Start the NEWFIRM DHS applications.
+
+# FOR NOW Oct 11, 2006 clean the share memory cache before starting
+
+util/shmUNuke 501  # 501 is gid for monsoon
+
+# Set default parameters.
+set dir 	 = $cwd
+
+set cache_file	    = "/tmp/.smc"
+set cache_size	    = 128000
+set debug 	    = 0
+set lock	    = 1
+set nsegs	    = 2048
+set throttle_time   = 2048
+set throttle_ntry   = 2048
+
+set imformat 	 = "mef"
+set ktm 	 = $dir/lib/generic.tcl
+
+# Define DHSHOST to set hostname; otherwise real one is used.
+if (! $?DHSHOST)  setenv DHSHOST `hostname`
+
+# Process command line options.  More options will be added later.
+while ("$1" != "")
+    switch ($1)
+    case "-help":
+    case "--help":
+	goto Usage
+	breaksw
+    case "-host":
+    case "-h":
+	shift; setenv DHSHOST $1
+	breaksw
+    case "-debug":
+    case "-d":
+        shift; set debug = $1
+
+    case "-dir":
+        shift; set dir = $1
+        breaksw
+    case "-cache":
+	shift; set vminit = $1
+	breaksw
+
+    case "-imformat":
+        shift; set imformat = $1
+        breaksw
+    case "-ktm":
+        shift; set ktm = $1
+        breaksw
+        breaksw
+    endsw
+    shift
+end
+
+# Find the directory where the command is located.
+set cmd_dir = "`dirname $0`"
+set bin_dir = "$cmd_dir/bin/"
+
+# Start the DHS.
+echo -n "Starting SMC status monitor .... "
+xterm -geometry 80x24+570+2 -T ndhs_stat -e $bin_dir/smcstat 3 >& /dev/null &
+
+echo -n "Starting Collector .... "
+xterm -geometry 80x24+2+396 -T ndhs_collector -e $bin_dir/collector 22 >& /dev/null &
+
+echo -n "Starting PXF FITS File Writer .... "
+xterm -geometry 80x24+570+396 -T ndhs_pxf -e $bin_dir/pxf -debug 12 >& /dev/null &
+
+echo -n "Starting Supervisor  .... "
+xterm -geometry 80x24+2+2 -T ndhs_supervisor -e $bin_dir/super >& /dev/null &
+
+#echo -n "Starting RTDSTAT monitor .... "
+#$bin_dir/rtdstat &
+
+
+exit 0
+
+
+Usage:
+cat << __End_Of_Help__
+# Usage: startdhs [flags - see below]
+#
+#       [-dir <dir>]		Working directory.
+#
+#       [-debug <level>]	Debug level for message output.
+#				0=errors-only, 1=operations, 2=debug, 3+=lots
+#
+# To change these parameters you can call mosdca directly, or make a copy of
+# this script and edit it.
+__End_Of_Help__

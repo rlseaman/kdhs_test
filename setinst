@@ -1,0 +1,40 @@
+#!/bin/csh -f
+
+switch ($1) 
+case newfirm:
+    echo "Setting up for newfirm"
+    echo  "#define NEWFIRM"	> include/instrument.h
+    echo  "#define KPNO"	> include/location.h
+    breaksw
+
+case mosaic1:
+    echo "Setting up for mosaic1"
+    echo  "#define MOSAIC"	> include/instrument.h
+    echo  "#define KPNO"	> include/location.h
+    breaksw
+
+case kosmos:
+    echo "Setting up for kosmos"
+    echo  "#define KOSMOS"	> include/instrument.h
+    echo  "#define KPNO"	> include/location.h
+    breaksw
+
+case cosmos:
+    echo "Setting up for cosmos"
+    echo  "#define COSMOS"	> include/instrument.h
+    echo  "#define CTIO"	> include/location.h
+    breaksw
+
+default:
+    echo "No such instrument '"$1"'"
+    echo "Valid instruments:  newfirm  mosaic1"
+    exit
+endsw
+
+/bin/rm -f ktm test
+
+ln -s dev/test.$1 test
+ln -s dev/ktm.$1  ktm
+ln -s dev/src.$1  dev/src
+
+/bin/rm -f lib/ktm.tcl ; ln -s lib/$1.tcl lib/ktm.tcl

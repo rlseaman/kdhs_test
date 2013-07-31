@@ -1,0 +1,2 @@
+run -console -mbus -host nfdhs-01 -port 4576 -debug 60 -id PanA 
+where

@@ -1,0 +1,30 @@
+#!/bin/csh -f 
+
+setenv DISPLAY denali:0.0
+
+
+echo "Data Directory..."
+echo ""
+ls /d2/tmp
+echo ""
+
+
+echo "Cleaning up...."
+echo ""
+./smclean
+./kpvm
+echo ""
+
+
+echo "Starting DHS...."
+echo ""
+echo ""
+
+(sleep 3; ssh localhost xterm -display denali:0.0 -fn fixed -geometry 80x20+0+290 -e /ndhs/bin/collector -console -port 19159 -debug 60 & ) &
+
+(sleep 4; ssh localhost xterm -display denali:0.0 -fn fixed -geometry 80x20+0+580 -e /ndhs/bin/smcmgr -console -mbus -dev fast:inet:3200:localhost -debug 60 & ) &
+
+(sleep 5; ssh localhost  xterm -display denali:0.0 -fn fixed -geometry 80x20+0+870 -e /ndhs/bin/pxf -console -mbus -debug 60 & ) &
+
+
+exec xterm -display denali:0.0 -fn fixed -geometry 80x20+0+0 -e /ndhs/dhssup/super -port 4150 -console -config /ndhs/dhssup/zz -geometry 640x580+600+0

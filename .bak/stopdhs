@@ -1,0 +1,62 @@
+#!/bin/csh -f
+#
+#  STOPDHS -- Stop the DHS applications.
+
+
+unalias ps egrep tail awk kill
+
+
+
+echo -n "Stopping SMC status monitor .... "
+set pid = `/bin/ps -x | egrep xterm | egrep ndhs_stat | awk '{print($1)}' | tail -1`
+set chk = `/bin/ps $pid | tail -1 | awk '{print($1)}'`
+if ($chk != $pid) then
+    echo "Not Found"
+else
+    kill -9 $pid >& /dev/null
+    echo "OK"
+endif
+
+echo -n "Stopping Collector .... "
+set pid = `/bin/ps -x | egrep xterm | egrep ndhs_collector | awk '{print($1)}' | tail -1`
+set chk = `/bin/ps $pid | tail -1 | awk '{print($1)}'`
+if ($chk != $pid) then
+    echo "Not Found"
+else
+    kill -9 $pid >& /dev/null
+    echo "OK"
+endif
+
+echo -n "Stopping PXF .... "
+set pid = `/bin/ps -x | egrep xterm | egrep ndhs_pxf | awk '{print($1)}' | tail -1`
+set chk = `/bin/ps $pid | tail -1 | awk '{print($1)}'`
+if ($chk != $pid) then
+    echo "Not Found"
+else
+    kill -9 $pid >& /dev/null
+    echo "OK"
+endif
+
+echo -n "Stopping Supervisor .... "
+set pid = `/bin/ps -x | egrep xterm | egrep ndhs_supervisor | awk '{print($1)}' | tail -1`
+set chk = `/bin/ps $pid | tail -1 | awk '{print($1)}'`
+if ($chk != $pid) then
+    echo "Not Found"
+else
+    kill -9 $pid >& /dev/null
+    echo "OK"
+endif
+
+echo -n "Stopping RTDSTAT monitor .... "
+set pid = `/bin/ps -x | egrep -v grep | egrep rtdstat | awk '{print($1)}' | tail -1`
+set chk = `/bin/ps $pid | tail -1 | awk '{print($1)}'`
+if ($chk != $pid) then
+    echo "Not Found"
+else
+    kill -9 $pid >& /dev/null
+    echo "OK"
+endif
+
+# util/shmUnuke 500
+util/shmUNuke 500
+exit 0

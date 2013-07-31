@@ -1,0 +1,5 @@
+#!/bin/csh -f 
+
+exec /dhs/bin/mosdca -debug 2 -reqlevel 2 -vminit cachesize=312m -imformat %N%04I.fits -maxgkw 150 -maxikw 150 -dir /home/data -ktm /dhs/lib/kosmos.tcl |& tee /tmp/mosdca.log
+
+

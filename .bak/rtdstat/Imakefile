@@ -1,0 +1,47 @@
+# Imakefile for the RTD/Status shell.
+
+X11IRAFDIR = /iraf/x11iraf/
+#include </iraf/x11iraf/X11IRAF.tmpl>
+
+    CDEBUGFLAGS = -g
+
+/* Hack to build on NOAO HP systems where the Xmu and Xaw libs had to be added
+ * specially to the system they don't come with the default X11 development
+ * system.  This also avoids the binary requiring the shared lib version on
+ * systems which may not have it.
+ */
+
+        LIBDIRS = cdl
+        SUBDIRS = $(LIBDIRS)
+
+  LOCAL_LDFLAGS = -L./cdl -L../smc  $(X11IRAF_LDFLAGS)
+ EXTRA_INCLUDES = $(X11IRAF_INCLUDES)
+        OBMLIBS = LibObm LibXpm
+        MATHLIB = -lm
+         CDLLIB = -lcdl
+         SMCLIB = -lsmCache
+         XAWLIB = LibXaw3d
+             CC = /usr/bin/gcc
+
+           HDRS = rtdstat.h rtdstat.gui.h
+           SRCS = rtdstat.c rtdClient.c
+           OBJS = rtdstat.o rtdClient.o
+
+
+AllTarget(libcdl.a rtdstat)
+
+NormalProgramTarget(rtdstat,$(OBJS),,${CDLLIB} ${SMCLIB} ${OBMLIBS} XawClientLibs,$(MATHLIB))
+
+
+libcdl.a: $(LIBDIRS)
+	@(cd cdl;  $(MAKE) -f Makefile.generic libcdl.a)
+
+
+rtdstat.o:	rtdstat.gui.h
+rtdstat.c:	rtdstat.gui.h
+
+rtdstat.gui.h:	rtdstat.gui
+	sed -f gui2c.sed rtdstat.gui > rtdstat.gui.h
+
+DependTarget()
+

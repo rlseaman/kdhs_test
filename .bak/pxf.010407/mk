@@ -1,0 +1,1 @@
+gcc -g -I ../lib/cfitsio tf.c tf1.c ../lib/cfitsio/libcfitsio.a -lm -o tf

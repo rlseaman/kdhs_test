@@ -1,0 +1,3 @@
+#!/bin/csh -f 
+
+/dhs/bin/collector -console -mbus -port 4575 -debug 60 -id NOCS |& tee /tmp/collector_nocs.log

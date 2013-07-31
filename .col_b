@@ -1,0 +1,2 @@
+run -console -mbus -host nfdhs-02 -port 4577 -debug 60 -id PanB
+where
