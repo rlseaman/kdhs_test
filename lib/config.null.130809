@@ -48,7 +48,7 @@ console	   winYstep	310
 console	   client_delay	2
 
 #trigger	   xarchive
-trigger	   cosmos
+trigger	   kosmos
 
 
 #----------------------------------------------------------------
@@ -63,10 +63,10 @@ host    localhost       127.0.0.1       	# Do Not Remove !!!
 #host    kosmosdca           192.168.17.216
 
 # host    xarchive         127.0.0.1
-host    cosmos           127.0.0.1
-host    cosmospan        127.0.0.1
-host    cosmosdhs        127.0.0.1
-host    cosmosdca        127.0.0.1
+host    kosmos           127.0.0.1
+host    kosmospan        127.0.0.1
+host    kosmosdhs        127.0.0.1
+host    kosmosdca        127.0.0.1
 
 #host    kosmos         kosmos-KP.kpno.noao.edu
 #host    kosmospan         kosmospan-KP.kpno.noao.edu
@@ -129,7 +129,7 @@ host    cosmosdca        127.0.0.1
 # Client Application table.
 #----------------------------------------------------------------
 
-Supervisor cosmos	/dhs/bin/super -name Super -port 4150
+Supervisor kosmos	/dhs/bin/super -name Super -port 4150
 
 
 
@@ -152,8 +152,8 @@ Supervisor cosmos	/dhs/bin/super -name Super -port 4150
 #pair	kosmospan-KP.kpno.noao.edu	kosmosdhs-KP:4576
 
 #pair	xarchive			kosmosdhs:4575
-pair	cosmos				cosmosdhs:4575
-pair	cosmospan			cosmosdhs:4576
+pair	kosmos				kosmosdhs:4575
+pair	kosmospan			kosmosdhs:4576
 
 #pair	kosmos.tuc.noao.edu		kosmosdhs.tuc.noao.edu:4575
 #pair	kosmospan.tuc.noao.edu		kosmosdhs.tuc.noao.edu:4576
